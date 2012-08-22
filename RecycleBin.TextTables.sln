@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecycleBin.TextTables", "RecycleBin.TextTables\RecycleBin.TextTables.csproj", "{81709BD3-1139-46BF-8115-3CC6B6EF4E6D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecycleBin.TextTables.Tests", "RecycleBin.TextTables.Tests\RecycleBin.TextTables.Tests.csproj", "{3C4D2507-1F41-4A20-861A-F460AB269E81}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{81709BD3-1139-46BF-8115-3CC6B6EF4E6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81709BD3-1139-46BF-8115-3CC6B6EF4E6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81709BD3-1139-46BF-8115-3CC6B6EF4E6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81709BD3-1139-46BF-8115-3CC6B6EF4E6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C4D2507-1F41-4A20-861A-F460AB269E81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C4D2507-1F41-4A20-861A-F460AB269E81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C4D2507-1F41-4A20-861A-F460AB269E81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C4D2507-1F41-4A20-861A-F460AB269E81}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

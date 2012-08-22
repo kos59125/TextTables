@@ -1,0 +1,9 @@
+﻿<NUnitProject>
+  <Settings activeconfig="Debug" />
+  <Config name="Debug" binpathtype="Auto">
+    <assembly path="RecycleBin.TextTables.Tests\bin\Debug\RecycleBin.TextTables.Tests.dll" />
+  </Config>
+  <Config name="Release" binpathtype="Auto">
+    <assembly path="RecycleBin.TextTables.Tests\bin\Release\RecycleBin.TextTables.Tests.dll" />
+  </Config>
+</NUnitProject>
