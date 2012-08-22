@@ -103,35 +103,35 @@ namespace RecycleBin.TextTables
             case TypeCode.Boolean:
                return Boolean.Parse(value);
             case TypeCode.Byte:
-               return Byte.Parse(value, provider);
+               return Byte.Parse(value, NumberStyles.Any, provider);
             case TypeCode.Char:
                return Char.Parse(value);
             case TypeCode.DateTime:
                return DateTime.Parse(value, provider);
             case TypeCode.Decimal:
-               return Decimal.Parse(value, provider);
+               return Decimal.Parse(value, NumberStyles.Any, provider);
             case TypeCode.Double:
-               return Double.Parse(value, provider);
+               return Double.Parse(value, NumberStyles.Any, provider);
             case TypeCode.Empty:
                return null;
             case TypeCode.Int16:
-               return Int16.Parse(value, provider);
+               return Int16.Parse(value, NumberStyles.Any, provider);
             case TypeCode.Int32:
-               return Int32.Parse(value, provider);
+               return Int32.Parse(value, NumberStyles.Any, provider);
             case TypeCode.Int64:
-               return Int64.Parse(value, provider);
+               return Int64.Parse(value, NumberStyles.Any, provider);
             case TypeCode.SByte:
-               return SByte.Parse(value, provider);
+               return SByte.Parse(value, NumberStyles.Any, provider);
             case TypeCode.Single:
-               return Single.Parse(value, provider);
+               return Single.Parse(value, NumberStyles.Any, provider);
             case TypeCode.String:
                return value;
             case TypeCode.UInt16:
-               return UInt16.Parse(value, provider);
+               return UInt16.Parse(value, NumberStyles.Any, provider);
             case TypeCode.UInt32:
-               return UInt32.Parse(value, provider);
+               return UInt32.Parse(value, NumberStyles.Any, provider);
             case TypeCode.UInt64:
-               return UInt64.Parse(value, provider);
+               return UInt64.Parse(value, NumberStyles.Any, provider);
             default:
                throw new NotSupportedException(string.Format("Type code {0} is not supported.", typeCode));
          }
