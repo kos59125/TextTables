@@ -50,7 +50,7 @@ Now, we can read the text file.
 ```csharp
 using (var table = new SpaceSeparatedTableReader(reader))
 {
-   // Notify the reader that line is the header.
+   // Notify the reader that the first line is the header.
    table.MoveNext();
    var header = table.Current.ToArray();
    table.SetHeader(header);
