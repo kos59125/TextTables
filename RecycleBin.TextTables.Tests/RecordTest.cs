@@ -8,6 +8,24 @@ namespace RecycleBin.TextTables
    internal class RecordTest
    {
       [Test]
+      public void TestNamedIndexer()
+      {
+         var csv = string.Format("1,2,3");
+         using (var stringReader = new StringReader(csv))
+         using (var reader = new CsvReader(stringReader))
+         {
+            reader.SetHeader(new[] { "First", "Second", "Third" });
+            Assert.That(reader.MoveNext(), Is.True);
+
+            var record = reader.Current;
+            Assert.That(record, Is.Not.Null);
+            Assert.That(record["First"], Is.EqualTo("1"));
+            Assert.That(record["Second"], Is.EqualTo("2"));
+            Assert.That(record["Third"], Is.EqualTo("3"));
+         }
+      }
+
+      [Test]
       public void TestMultipleColumn([Values(EndOfLine.CRLF, EndOfLine.LF, EndOfLine.CR)] EndOfLine eol)
       {
          var csv = string.Format("1,二{0}", eol.AsNewline());
