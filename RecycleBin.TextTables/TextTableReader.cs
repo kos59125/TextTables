@@ -40,11 +40,25 @@ namespace RecycleBin.TextTables
       }
 
       /// <summary>
-      /// Handles the header line.
+      /// Sets the specified array as a header.
       /// </summary>
       /// <returns>The header.</returns>
       public void SetHeader(string[] header)
       {
+         this.currentRecord.SetHeader(header);
+      }
+
+      /// <summary>
+      /// Handles the next row as a header and advances the current position.
+      /// </summary>
+      /// <returns>The header.</returns>
+      public void HandleHeaderRow()
+      {
+         if (!MoveNext())
+         {
+            throw new InvalidOperationException("There is no row to read.");
+         }
+         var header = this.currentRecord.ToArray();
          this.currentRecord.SetHeader(header);
       }
 
