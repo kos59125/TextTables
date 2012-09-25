@@ -54,6 +54,7 @@
     <Compile Include="SpaceSeparatedTableReaderTest.cs" />
     <Compile Include="StackBufferedTextReaderTest.cs" />
     <Compile Include="TextTableReaderTest.cs" />
+    <Compile Include="ValueAttributeTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

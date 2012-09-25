@@ -97,6 +97,10 @@ namespace RecycleBin.TextTables
 
       private static object ParsePrimitive(Type type, string value, IFormatProvider provider)
       {
+         if (type.IsEnum)
+         {
+            return Enum.Parse(type, value, true);
+         }
          var typeCode = Type.GetTypeCode(type);
          switch (typeCode)
          {
