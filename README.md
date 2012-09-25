@@ -51,9 +51,7 @@ Now, we can read the text file.
 using (var table = new SpaceSeparatedTableReader(reader))
 {
    // Notify the reader that the first line is the header.
-   table.MoveNext();
-   var header = table.Current.ToArray();
-   table.SetHeader(header);
+   table.HandleHeaderRow();
 
    // LINQ is available.
    var query = from person in table.ReadToEnd<Person>()
