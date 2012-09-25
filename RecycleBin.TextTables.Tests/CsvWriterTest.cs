@@ -242,5 +242,17 @@ namespace RecycleBin.TextTables
             }
          }
       }
+
+      [Test]
+      public void CanCloseAfterInnerReaderClosed()
+      {
+         using (var stream = new MemoryStream())
+         using (var streamWriter = new StreamWriter(stream))
+         using (var writer = new CsvWriter(streamWriter))
+         {
+            streamWriter.Close();
+            writer.Close();
+         }
+      }
    }
 }

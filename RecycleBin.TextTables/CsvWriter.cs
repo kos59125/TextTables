@@ -76,15 +76,5 @@ namespace RecycleBin.TextTables
             return field;
          }
       }
-
-      /// <summary>
-      /// Disposes the writer.
-      /// </summary>
-      /// <param name="disposing">Determines disposing unmanaged resources.</param>
-      protected override void Dispose(bool disposing)
-      {
-         Flush();
-         base.Dispose(disposing);
-      }
    }
 }
