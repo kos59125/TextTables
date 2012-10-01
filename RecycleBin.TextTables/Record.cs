@@ -141,6 +141,7 @@ namespace RecycleBin.TextTables
          this.record.Clear();
       }
 
+      /// <inheritDoc />
       public IEnumerator<string> GetEnumerator()
       {
          return this.record.GetEnumerator();

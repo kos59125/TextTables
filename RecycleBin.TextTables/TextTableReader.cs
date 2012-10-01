@@ -17,6 +17,9 @@ namespace RecycleBin.TextTables
       private readonly StringBuilder fieldBuffer;
       private ReadState state;
 
+      /// <summary>
+      /// Gets the current record.
+      /// </summary>
       public Record Current
       {
          get { return this.currentRecord; }
@@ -30,8 +33,6 @@ namespace RecycleBin.TextTables
       /// <summary>
       /// Initializes a new instance.
       /// </summary>
-      /// <param name="stream">The stream to read.</param>
-      /// <param name="settings">The settings.</param>
       protected TextTableReader()
       {
          this.currentRecord = new Record();
@@ -148,6 +149,9 @@ namespace RecycleBin.TextTables
          }
       }
 
+      /// <summary>
+      /// Unused.
+      /// </summary>
       public virtual void Reset()
       {
       }

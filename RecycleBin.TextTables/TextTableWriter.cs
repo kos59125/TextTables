@@ -18,8 +18,7 @@ namespace RecycleBin.TextTables
       /// <summary>
       /// Initializes a new instance.
       /// </summary>
-      /// <param name="stream">The stream to output.</param>
-      /// <param name="settings">The settings.</param>
+      /// <param name="writer">The writer to output.</param>
       protected TextTableWriter(TextWriter writer)
       {
          if (writer == null)
@@ -74,7 +73,7 @@ namespace RecycleBin.TextTables
       /// <summary>
       /// Sets the header of the table.
       /// </summary>
-      /// <param name="recordType">The type of records.</<TRecord>>
+      /// <param name="recordType">The type of records.</param>
       /// <seealso cref="WriteHeader"/>
       public void SetHeader(Type recordType)
       {

@@ -10,6 +10,12 @@ namespace RecycleBin.TextTables
    /// </remarks>
    public interface IParser
    {
+      /// <summary>
+      /// Parses the input value as object representation.
+      /// </summary>
+      /// <param name="value">The string to parse.</param>
+      /// <param name="provider">The provider.</param>
+      /// <returns>The result.</returns>
       object Parse(string value, IFormatProvider provider);
    }
 
@@ -21,6 +27,12 @@ namespace RecycleBin.TextTables
    /// </remarks>
    public interface IFormatter
    {
+      /// <summary>
+      /// Formats the input value as string representation.
+      /// </summary>
+      /// <param name="value">The object to format.</param>
+      /// <param name="provider">The provider.</param>
+      /// <returns>The string representation.</returns>
       string Format(object value, IFormatProvider provider);
    }
 }

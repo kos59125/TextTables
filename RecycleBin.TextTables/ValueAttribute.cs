@@ -51,6 +51,9 @@ namespace RecycleBin.TextTables
       /// <returns>The formatter.</returns>
       public Type FormatterType { get; set; }
 
+      /// <summary>
+      /// Initializes a new instance.
+      /// </summary>
       public ValueAttribute()
       {
          this.parserCache = new Dictionary<Type, Func<string, IFormatProvider, object>>();
