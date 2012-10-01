@@ -8,6 +8,7 @@ namespace RecycleBin.TextTables
    /// <summary>
    /// Represents a <see cref="TextReader"/> that is able to push any characters to head position.
    /// </summary>
+   [Serializable]
    public class StackBufferedTextReader : TextReader
    {
       private readonly Stack<char> charBuffer;

@@ -8,6 +8,7 @@ namespace RecycleBin.TextTables
    /// <summary>
    /// Represents a record.
    /// </summary>
+   [Serializable]
    public class Record : IEnumerable<string>
    {
       private static readonly string[] Empty = new string[0];
