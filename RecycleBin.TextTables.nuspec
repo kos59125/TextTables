@@ -6,7 +6,7 @@
       <title>RecycleBin.TextTables</title>
       <authors>RecycleBin</authors>
       <owners>kos59125</owners>
-      <licenseUrl>https://github.com/kos59125/TextTables/blob/master/LICNSE</licenseUrl>
+      <licenseUrl>https://github.com/kos59125/TextTables/blob/master/LICENSE</licenseUrl>
       <projectUrl>https://github.com/kos59125/TextTables</projectUrl>
       <requireLicenseAcceptance>true</requireLicenseAcceptance>
       <description>Reads and writes a data table in text format such as CSV, TSV, and space-delimited text. Also provides a way to bind each row to user defined class, so that user can easily create instances from a text table.</description>
