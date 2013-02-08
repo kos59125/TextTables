@@ -146,15 +146,16 @@ namespace RecycleBin.TextTables
 
       private static Func<string, IFormatProvider, object> GenerateParse(Type parserType)
       {
-         var parser = Activator.CreateInstance(parserType);
          var parse = parserType.GetMethod("Parse", new[] { typeof(string), typeof(IFormatProvider) });
          if (parse != null)
          {
+            var parser = parse.IsStatic ? null : Activator.CreateInstance(parserType);
             return (value, provider) => parse.Invoke(parser, new object[] { value, provider });
          }
          parse = parserType.GetMethod("Parse", new[] { typeof(string) });
          if (parse != null)
          {
+            var parser = parse.IsStatic ? null : Activator.CreateInstance(parserType);
             return (value, _) => parse.Invoke(parser, new object[] { value });
          }
          throw new ArgumentException(string.Format("ParserType '{0}' does not have Parse(String [, IFormatProvider]) method.", parserType.FullName));
@@ -191,15 +192,16 @@ namespace RecycleBin.TextTables
 
       private static Func<object, IFormatProvider, string> GenerateFormat(Type formatterType)
       {
-         var formatter = Activator.CreateInstance(formatterType);
          var format = formatterType.GetMethod("Format", new[] { typeof(object), typeof(IFormatProvider) });
          if (format != null && format.ReturnType == typeof(string))
          {
+            var formatter = format.IsStatic ? null : Activator.CreateInstance(formatterType);
             return (value, provider) => (string)format.Invoke(formatter, new[] { value, provider });
          }
          format = formatterType.GetMethod("Format", new[] { typeof(object) });
          if (format != null && format.ReturnType == typeof(string))
          {
+            var formatter = format.IsStatic ? null : Activator.CreateInstance(formatterType);
             return (value, _) => (string)format.Invoke(formatter, new[] { value });
          }
          throw new ArgumentException(string.Format("FormatterType '{0}' does not have Format(Object [, IFormatProvider]) method.", formatterType.FullName));
