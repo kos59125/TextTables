@@ -10,12 +10,24 @@ namespace RecycleBin.TextTables
    [Serializable]
    public class CsvWriter : TextTableWriter
    {
+      private readonly TextWriter writer;
       private readonly string delimiter;
       private readonly char quotation;
       private readonly string separator;
       private readonly bool quoteField;
       private readonly string quotationString;
       private readonly string escapedQuotation;
+      private bool disposed;
+
+      /// <summary>
+      /// Initializes a new <see cref="CsvWriter"/> with the specified path to output.
+      /// </summary>
+      /// <param name="path">The path to file to write in.</param>
+      /// <param name="settings">The settings.</param>
+      public CsvWriter(string path, CsvWriterSettings settings = null)
+         : this(new StreamWriter(path), settings, false)
+      {
+      }
 
       /// <summary>
       /// Initializes a new <see cref="CsvWriter"/> with the specified path to output.
@@ -23,8 +35,17 @@ namespace RecycleBin.TextTables
       /// <param name="writer">The writer.</param>
       /// <param name="settings">The settings.</param>
       public CsvWriter(TextWriter writer, CsvWriterSettings settings = null)
-         : base(writer)
+         : this(writer, settings, true)
       {
+      }
+
+      private CsvWriter(TextWriter writer, CsvWriterSettings settings, bool disposed)
+      {
+         if (writer == null)
+         {
+            throw new ArgumentNullException("writer");
+         }
+         this.writer = writer;
          settings = settings ?? new CsvWriterSettings();
          this.delimiter = settings.RecordDelimiter.AsNewline();
          this.separator = settings.FieldDelimiter;
@@ -32,6 +53,13 @@ namespace RecycleBin.TextTables
          this.quotationString = settings.QuotationCharacter.ToString();
          this.quoteField = settings.QuoteField;
          this.escapedQuotation = this.quotationString + this.quotationString;
+         this.disposed = disposed;
+      }
+
+      /// <inheritDoc />
+      public override void Flush()
+      {
+         this.writer.Flush();
       }
 
       /// <summary>
@@ -39,7 +67,7 @@ namespace RecycleBin.TextTables
       /// </summary>
       protected override void OnEndRecord()
       {
-         Write(this.delimiter);
+         this.writer.Write(this.delimiter);
       }
 
       /// <summary>
@@ -51,7 +79,7 @@ namespace RecycleBin.TextTables
       {
          if (index != 0)
          {
-            Write(this.separator);
+            this.writer.Write(this.separator);
          }
       }
 
@@ -62,7 +90,7 @@ namespace RecycleBin.TextTables
       /// <param name="index">The field index.</param>
       protected override void WriteField(string field, int index)
       {
-         Write(Enquote(field));
+         this.writer.Write(Enquote(field));
       }
 
       private string Enquote(string field)
@@ -75,6 +103,17 @@ namespace RecycleBin.TextTables
          {
             return field;
          }
+      }
+
+      /// <inheritDoc />
+      protected override void Dispose(bool disposing)
+      {
+         if (!this.disposed)
+         {
+            this.writer.Dispose();
+            this.disposed = true;
+         }
+         base.Dispose(disposing);
       }
    }
 }

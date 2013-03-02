@@ -19,13 +19,29 @@ namespace RecycleBin.TextTables
       private readonly string newline;
       private readonly int newlineFirst;
       private readonly char quotation;
+      private bool disposed;
 
       /// <summary>
-      /// Initializes a new <see cref="CsvReader"/> with the specified path to reading file.
+      /// Initializes a new <see cref="SpaceSeparatedTableReader"/> with the specified path to reading file.
+      /// </summary>
+      /// <param name="path">The path to file to read.</param>
+      /// <param name="settings">The settings.</param>
+      public SpaceSeparatedTableReader(string path, SpaceSeparatedTableReaderSettings settings = null)
+         : this(new StreamReader(path), settings, false)
+      {
+      }
+
+      /// <summary>
+      /// Initializes a new <see cref="SpaceSeparatedTableReader"/> with the specified path to reading file.
       /// </summary>
       /// <param name="reader">The reader.</param>
       /// <param name="settings">The settings.</param>
       public SpaceSeparatedTableReader(TextReader reader, SpaceSeparatedTableReaderSettings settings = null)
+         : this(reader, settings, true)
+      {
+      }
+         
+      private SpaceSeparatedTableReader(TextReader reader, SpaceSeparatedTableReaderSettings settings, bool disposed)
       {
          if (reader == null)
          {
@@ -36,6 +52,7 @@ namespace RecycleBin.TextTables
          this.newline = settings.RecordDelimiter.AsNewline();
          this.newlineFirst = (int)this.newline[0];
          this.quotation = settings.QuotationCharacter;
+         this.disposed = disposed;
       }
 
       /// <summary>

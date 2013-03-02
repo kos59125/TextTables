@@ -12,20 +12,13 @@ namespace RecycleBin.TextTables
    public abstract class TextTableWriter : IDisposable
    {
       private readonly Dictionary<Type, List<Tuple<GetValue, ColumnAttribute>>> typeCache;
-      private readonly TextWriter writer;
       private string[] header;
 
       /// <summary>
       /// Initializes a new instance.
       /// </summary>
-      /// <param name="writer">The writer to output.</param>
-      protected TextTableWriter(TextWriter writer)
+      protected TextTableWriter()
       {
-         if (writer == null)
-         {
-            throw new ArgumentNullException("writer");
-         }
-         this.writer = writer;
          this.typeCache = new Dictionary<Type, List<Tuple<GetValue, ColumnAttribute>>>();
       }
 
@@ -37,28 +30,7 @@ namespace RecycleBin.TextTables
       /// <summary>
       /// Clears all buffers for the current writer and causes any buffered data to be written to the underlying stream.
       /// </summary>
-      public void Flush()
-      {
-         this.writer.Flush();
-      }
-
-      /// <summary>
-      /// Writes a character to the stream.
-      /// </summary>
-      /// <param name="value">The character to write.</param>
-      protected void Write(char value)
-      {
-         this.writer.Write(value);
-      }
-
-      /// <summary>
-      /// Writes a string to the stream.
-      /// </summary>
-      /// <param name="value">The string to write.</param>
-      protected void Write(string value)
-      {
-         this.writer.Write(value);
-      }
+      public abstract void Flush();
 
       /// <summary>
       /// Sets the header of the table.
@@ -121,7 +93,7 @@ namespace RecycleBin.TextTables
 
          if (AutoFlush)
          {
-            this.writer.Flush();
+            Flush();
          }
       }
 
@@ -149,10 +121,7 @@ namespace RecycleBin.TextTables
       /// </summary>
       /// <param name="field">The field.</param>
       /// <param name="index">The field index.</param>
-      protected virtual void WriteField(string field, int index)
-      {
-         this.writer.Write(field);
-      }
+      protected abstract void WriteField(string field, int index);
 
       /// <summary>
       /// Specifies the action after writing a record.

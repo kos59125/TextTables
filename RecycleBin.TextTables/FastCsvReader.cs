@@ -26,13 +26,29 @@ namespace RecycleBin.TextTables
       /// </summary>
       private string buffer;
       private int bufferIndex = 0;
+      private bool disposed;
 
       /// <summary>
-      /// Initializes a new <see cref="CsvReader"/> with the specified path to reading file.
+      /// Initializes a new <see cref="FastCsvReader"/> with the specified path to reading file.
+      /// </summary>
+      /// <param name="path">The path to file to read.</param>
+      /// <param name="settings">The settings.</param>
+      public FastCsvReader(string path, FastCsvReaderSettings settings = null)
+         : this(new StreamReader(path), settings, false)
+      {
+      }
+
+      /// <summary>
+      /// Initializes a new <see cref="FastCsvReader"/> with the specified path to reading file.
       /// </summary>
       /// <param name="reader">The reader.</param>
       /// <param name="settings">The settings.</param>
       public FastCsvReader(TextReader reader, FastCsvReaderSettings settings = null)
+         : this(reader, settings, true)
+      {
+      }
+
+      private FastCsvReader(TextReader reader, FastCsvReaderSettings settings, bool disposed)
       {
          if (reader == null)
          {
@@ -42,6 +58,7 @@ namespace RecycleBin.TextTables
          this.reader = reader;
          this.separator = settings.FieldDelimiter;
          this.quotation = settings.QuotationCharacter;
+         this.disposed = disposed;
          FillBuffer();
       }
 
@@ -153,6 +170,17 @@ namespace RecycleBin.TextTables
                throw new FormatException();
          }
          throw new InvalidOperationException();
+      }
+
+      /// <inheritDoc />
+      protected override void Dispose(bool disposing)
+      {
+         if (!this.disposed)
+         {
+            this.reader.Dispose();
+            this.disposed = true;
+         }
+         base.Dispose(disposing);
       }
    }
 }
