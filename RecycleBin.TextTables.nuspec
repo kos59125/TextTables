@@ -18,7 +18,7 @@
       <tags>table CSV TSV space-delimited parser reader writer LINQ</tags>
    </metadata>
    <files>
-      <file src="publish\*.dll" target="lib\net40" />
-      <file src="publish\*.xml" target="lib\net40" />
+      <file src="RecycleBin.TextTables\bin\Release\*.dll" target="lib\net40" />
+      <file src="RecycleBin.TextTables\bin\Release\*.xml" target="lib\net40" />
    </files>
 </package>
