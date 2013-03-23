@@ -96,6 +96,39 @@ namespace RecycleBin.TextTables
       }
 
       [Test]
+      public void TestReadOmittableRecord([Values(EndOfLine.CRLF, EndOfLine.LF, EndOfLine.CR)] EndOfLine eol)
+      {
+         var csv = string.Format("1,2,3{0}4,5{0}6{0}", eol.AsNewline());
+         var settings = new CsvReaderSettings()
+         {
+            RecordDelimiter = eol,
+         };
+         using (var stringReader = new StringReader(csv))
+         using (var reader = new CsvReader(stringReader, settings))
+         {
+            Assert.That(reader.MoveNext(), Is.True);
+            var record = reader.Current.Convert<OmittableRecord>();
+            Assert.That(record, Is.Not.Null);
+            Assert.That(record.Column1, Is.EqualTo(1));
+            Assert.That(record.Column2, Is.EqualTo(2));
+            Assert.That(record.Column3, Is.EqualTo(3));
+            Assert.That(reader.MoveNext(), Is.True);
+            record = reader.Current.Convert<OmittableRecord>();
+            Assert.That(record, Is.Not.Null);
+            Assert.That(record.Column1, Is.EqualTo(4));
+            Assert.That(record.Column2, Is.EqualTo(5));
+            Assert.That(record.Column3, Is.EqualTo(default(int)));
+            Assert.That(reader.MoveNext(), Is.True);
+            record = reader.Current.Convert<OmittableRecord>();
+            Assert.That(record, Is.Not.Null);
+            Assert.That(record.Column1, Is.EqualTo(6));
+            Assert.That(record.Column2, Is.EqualTo(default(int)));
+            Assert.That(record.Column3, Is.EqualTo(default(int)));
+            Assert.That(reader.MoveNext(), Is.False);
+         }
+      }
+
+      [Test]
       public void TestReadRecordGeneric([Values(EndOfLine.CRLF, EndOfLine.LF, EndOfLine.CR)] EndOfLine eol)
       {
          var headerLine = "string1,int1,double1,parsed1,ignored1,string2,int2,double2,parsed2,ignored2";

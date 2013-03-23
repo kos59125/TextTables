@@ -122,6 +122,10 @@ namespace RecycleBin.TextTables
             var attribute = tuple.Item2;
             var type = tuple.Item3;
             var index = attribute.GetIndex(this.header);
+            if (attribute.Omittable && index >= FieldCount)
+            {
+               continue;
+            }
             var value = attribute.Parse(this[index], type);
             setValue(prototype, value);
          }

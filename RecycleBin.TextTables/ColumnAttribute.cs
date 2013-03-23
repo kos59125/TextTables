@@ -69,6 +69,14 @@ namespace RecycleBin.TextTables
          get { return this.index; }
       }
 
+      /// <summary>
+      /// Gets or sets the value indicating field at the column may be omitted.
+      /// </summary>
+      /// <remarks>
+      /// If the <see cref="Omittable"/> is set <c>True</c>, the column should be the last column in records.
+      /// </remarks>
+      public bool Omittable { get; set; }
+
       internal int GetIndex(string[] names)
       {
          return Index >= 0 ? Index : Array.IndexOf(names ?? Empty, Name);

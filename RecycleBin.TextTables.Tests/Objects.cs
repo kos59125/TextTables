@@ -113,6 +113,16 @@ namespace RecycleBin.TextTables
       }
    }
 
+   public class OmittableRecord
+   {
+      [Column(0)]
+      public int Column1 { get; set; }
+      [Column(1, Omittable = true)]
+      public int Column2 { get; set; }
+      [Column(2, Omittable = true)]
+      public int Column3 { get; set; }
+   }
+
    public class Parser : IParser
    {
       public object Parse(string value, IFormatProvider provider)
