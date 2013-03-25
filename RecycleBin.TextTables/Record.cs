@@ -98,15 +98,26 @@ namespace RecycleBin.TextTables
                                         .SingleOrDefault(c => c.GetCustomAttributes(typeof(RecordConstructorAttribute), false).Length > 0);
             if (constructor != null)
             {
-               var instantiationInfo = constructor.GetParameters().Select(parameter => new { Type = parameter.ParameterType, Attribute = (ColumnAttribute)parameter.GetCustomAttributes(typeof(ColumnAttribute), false).Single() }).ToList();
+               var instantiationInfo = constructor.GetParameters().Select(parameter => new { Parameter = parameter, Attribute = (ColumnAttribute)parameter.GetCustomAttributes(typeof(ColumnAttribute), false).Single() }).ToList();
                create = () =>
                {
                   var parameters = instantiationInfo.Select(
                      info =>
                      {
-                        var type = info.Type;
+                        var parameter = info.Parameter;
+                        var type = parameter.ParameterType;
                         var attribute = info.Attribute;
                         var index = attribute.GetIndex(this.header);
+                        if (index >= FieldCount && parameter.IsOptional)  // Omittable is omittable if default parameter is given.
+                        {
+                           var defaultValue = info.Parameter.DefaultValue;
+                           // Uncomment below when permitting users to use Omittable without default parameter.
+                           //if (Type.GetTypeCode(defaultValue.GetType()) == TypeCode.DBNull)
+                           //{
+                           //   return type.IsValueType ? Activator.CreateInstance(type) : null;
+                           //}
+                           return defaultValue;
+                        }
                         return attribute.Parse(this[index], type);
                      }
                   ).ToArray();
