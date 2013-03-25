@@ -54,6 +54,7 @@
     <Compile Include="Interfaces.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Record.cs" />
+    <Compile Include="RecordConstructorAttribute.cs" />
     <Compile Include="SpaceSeparatedTableReader.cs" />
     <Compile Include="SpaceSeparatedTableReaderSettings.cs" />
     <Compile Include="StackBufferedTextReader.cs" />

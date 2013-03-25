@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace RecycleBin.TextTables
 {
@@ -14,7 +15,8 @@ namespace RecycleBin.TextTables
       private static readonly string[] Empty = new string[0];
 
       private readonly List<string> record;
-      private readonly Dictionary<Type, List<Tuple<SetValue, ColumnAttribute, Type>>> typeCache;
+      private readonly Dictionary<Type, List<Tuple<SetValue, ColumnAttribute, Type>>> propertyCache;
+      private readonly Dictionary<Type, CreateInstance> instantiationCache;
       private string[] header;
 
       /// <summary>
@@ -65,7 +67,8 @@ namespace RecycleBin.TextTables
       {
          this.record = new List<string>();
          this.header = null;
-         this.typeCache = new Dictionary<Type, List<Tuple<SetValue, ColumnAttribute, Type>>>();
+         this.propertyCache = new Dictionary<Type, List<Tuple<SetValue, ColumnAttribute, Type>>>();
+         this.instantiationCache = new Dictionary<Type, CreateInstance>();
       }
 
       /// <summary>
@@ -81,9 +84,43 @@ namespace RecycleBin.TextTables
          {
             recordType = recordType.GetGenericArguments()[0];
          }
-         var prototype = Activator.CreateInstance(recordType);
+         var prototype = CreateInstance(recordType);
          SetValues(recordType, ref prototype);
          return (TRecord)prototype;
+      }
+
+      private object CreateInstance(Type recordType)
+      {
+         CreateInstance create;
+         if (!this.instantiationCache.TryGetValue(recordType, out create))
+         {
+            var constructor = recordType.GetConstructors()
+                                        .SingleOrDefault(c => c.GetCustomAttributes(typeof(RecordConstructorAttribute), false).Length > 0);
+            if (constructor != null)
+            {
+               var instantiationInfo = constructor.GetParameters().Select(parameter => new { Type = parameter.ParameterType, Attribute = (ColumnAttribute)parameter.GetCustomAttributes(typeof(ColumnAttribute), false).Single() }).ToList();
+               create = () =>
+               {
+                  var parameters = instantiationInfo.Select(
+                     info =>
+                     {
+                        var type = info.Type;
+                        var attribute = info.Attribute;
+                        var index = attribute.GetIndex(this.header);
+                        return attribute.Parse(this[index], type);
+                     }
+                  ).ToArray();
+                  return constructor.Invoke(parameters);
+               };
+            }
+            else
+            {
+               constructor = recordType.GetDefaultConstructor();
+               create = () => constructor.Invoke(null);
+            }
+            this.instantiationCache.Add(recordType, create);
+         }
+         return create();
       }
 
       /// <summary>
@@ -100,7 +137,7 @@ namespace RecycleBin.TextTables
       private void SetValues(Type recordType, ref object prototype)
       {
          List<Tuple<SetValue, ColumnAttribute, Type>> members;
-         if (!this.typeCache.TryGetValue(recordType, out members))
+         if (!this.propertyCache.TryGetValue(recordType, out members))
          {
             var properties = from property in recordType.GetProperties()
                              let attributes = property.GetCustomAttributes(typeof(ColumnAttribute), true)
@@ -113,7 +150,7 @@ namespace RecycleBin.TextTables
                          let setField = attribute.GenerateSetValue(field)
                          select Tuple.Create(setField, attribute, field.FieldType);
             members = properties.Concat(fields).ToList();
-            this.typeCache.Add(recordType, members);
+            this.propertyCache.Add(recordType, members);
          }
 
          foreach (var tuple in members)

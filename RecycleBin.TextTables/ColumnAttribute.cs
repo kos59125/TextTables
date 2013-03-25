@@ -6,7 +6,7 @@ namespace RecycleBin.TextTables
    /// Provides metainformation to parse string values.
    /// </summary>
    [Serializable]
-   [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true, Inherited = true)]
+   [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = true, Inherited = true)]
    public class ColumnAttribute : ValueAttribute
    {
       private static readonly string[] Empty = new string[0];

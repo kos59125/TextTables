@@ -9,6 +9,11 @@ namespace RecycleBin.TextTables
 {
    internal static class TypeExtension
    {
+      internal static ConstructorInfo GetDefaultConstructor(this Type type)
+      {
+         return type.GetConstructor(Type.EmptyTypes);
+      }
+
       internal static bool IsNullable(this Type type)
       {
          Contract.Requires(type != null);

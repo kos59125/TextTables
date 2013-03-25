@@ -50,6 +50,7 @@
     <Compile Include="FastCsvReaderTest.cs" />
     <Compile Include="Objects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecordConstructorTest.cs" />
     <Compile Include="RecordTest.cs" />
     <Compile Include="SpaceSeparatedTableReaderTest.cs" />
     <Compile Include="StackBufferedTextReaderTest.cs" />
