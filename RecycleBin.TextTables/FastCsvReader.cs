@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace RecycleBin.TextTables
@@ -35,6 +34,38 @@ namespace RecycleBin.TextTables
       /// <param name="settings">The settings.</param>
       public FastCsvReader(string path, FastCsvReaderSettings settings = null)
          : this(new StreamReader(path), settings, false)
+      {
+      }
+
+      /// <summary>
+      /// Initializes a new <see cref="FastCsvReader"/> with the specified path to reading file.
+      /// </summary>
+      /// <param name="path">The path to file to read.</param>
+      /// <param name="encoding">The encoding.</param>
+      /// <param name="settings">The settings.</param>
+      public FastCsvReader(string path, Encoding encoding, FastCsvReaderSettings settings = null)
+         : this(new StreamReader(path, encoding), settings, false)
+      {
+      }
+
+      /// <summary>
+      /// Initializes a new <see cref="FastCsvReader"/> with the specified file stream.
+      /// </summary>
+      /// <param name="stream">The file stream.</param>
+      /// <param name="settings">The settings.</param>
+      public FastCsvReader(Stream stream, FastCsvReaderSettings settings = null)
+         : this(new StreamReader(stream), settings, false)
+      {
+      }
+
+      /// <summary>
+      /// Initializes a new <see cref="FastCsvReader"/> with the specified file stream.
+      /// </summary>
+      /// <param name="stream">The file stream.</param>
+      /// <param name="encoding">The encoding.</param>
+      /// <param name="settings">The settings.</param>
+      public FastCsvReader(Stream stream, Encoding encoding, FastCsvReaderSettings settings = null)
+         : this(new StreamReader(stream, encoding), settings, false)
       {
       }
 

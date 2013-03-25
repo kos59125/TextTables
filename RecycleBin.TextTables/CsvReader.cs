@@ -38,6 +38,38 @@ namespace RecycleBin.TextTables
       /// <summary>
       /// Initializes a new <see cref="CsvReader"/> with the specified path to reading file.
       /// </summary>
+      /// <param name="path">The path to file to read.</param>
+      /// <param name="encoding">The encoding.</param>
+      /// <param name="settings">The settings.</param>
+      public CsvReader(string path, Encoding encoding, CsvReaderSettings settings = null)
+         : this(new StreamReader(path, encoding), settings, false)
+      {
+      }
+
+      /// <summary>
+      /// Initializes a new <see cref="CsvReader"/> with the specified file stream.
+      /// </summary>
+      /// <param name="stream">The file stream.</param>
+      /// <param name="settings">The settings.</param>
+      public CsvReader(Stream stream, CsvReaderSettings settings = null)
+         : this(new StreamReader(stream), settings, false)
+      {
+      }
+
+      /// <summary>
+      /// Initializes a new <see cref="CsvReader"/> with the specified file stream.
+      /// </summary>
+      /// <param name="stream">The file stream.</param>
+      /// <param name="encoding">The encoding.</param>
+      /// <param name="settings">The settings.</param>
+      public CsvReader(Stream stream, Encoding encoding, CsvReaderSettings settings = null)
+         : this(new StreamReader(stream, encoding), settings, false)
+      {
+      }
+
+      /// <summary>
+      /// Initializes a new <see cref="CsvReader"/> with the specified path to reading file.
+      /// </summary>
       /// <param name="reader">The reader.</param>
       /// <param name="settings">The settings.</param>
       public CsvReader(TextReader reader, CsvReaderSettings settings = null)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace RecycleBin.TextTables
 {
@@ -26,6 +27,38 @@ namespace RecycleBin.TextTables
       /// <param name="settings">The settings.</param>
       public CsvWriter(string path, CsvWriterSettings settings = null)
          : this(new StreamWriter(path), settings, false)
+      {
+      }
+
+      /// <summary>
+      /// Initializes a new <see cref="CsvWriter"/> with the specified path to output.
+      /// </summary>
+      /// <param name="path">The path to file to write in.</param>
+      /// <param name="encoding">The encoding.</param>
+      /// <param name="settings">The settings.</param>
+      public CsvWriter(string path, Encoding encoding, CsvWriterSettings settings = null)
+         : this(new StreamWriter(path, false, encoding, 0x400), settings, false)
+      {
+      }
+
+      /// <summary>
+      /// Initializes a new <see cref="CsvWriter"/> with the specified file stream.
+      /// </summary>
+      /// <param name="stream">The file stream.</param>
+      /// <param name="settings">The settings.</param>
+      public CsvWriter(Stream stream, CsvWriterSettings settings = null)
+         : this(new StreamWriter(stream), settings, false)
+      {
+      }
+
+      /// <summary>
+      /// Initializes a new <see cref="CsvWriter"/> with the specified file stream.
+      /// </summary>
+      /// <param name="stream">The file stream.</param>
+      /// <param name="encoding">The encoding.</param>
+      /// <param name="settings">The settings.</param>
+      public CsvWriter(Stream stream, Encoding encoding, CsvWriterSettings settings = null)
+         : this(new StreamWriter(stream, encoding), settings, false)
       {
       }
 
