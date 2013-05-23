@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
@@ -172,6 +173,32 @@ namespace RecycleBin.TextTables
             ParserType = typeof(TestClassParserFormatter)
          };
          var actual = attribute.Parse("1", typeof(TestClass));
+         Assert.That(actual, Is.EqualTo(expected));
+      }
+
+      [Test]
+      [ExpectedException(typeof(FormatException))]
+      public void TestParseWithNumberStyle()
+      {
+         var attribute = new ValueAttribute()
+         {
+            NumberStyle = NumberStyles.Integer
+         };
+         var expectedType = typeof(Double);
+         Assert.That(attribute.Parse("1", expectedType), Is.EqualTo(Double.Parse("1")));
+         Assert.That(attribute.Parse("1.0", expectedType), Throws.TypeOf(typeof(FormatException)));
+      }
+
+      [Test]
+      public void TestParseWithDateTimeStyle()
+      {
+         var expected = DateTime.Parse("2000-01-01 00:00");
+         var attribute = new ValueAttribute()
+         {
+            CultureName = "ja-JP",  // JST is 9 hours ahead of UTC
+            DateTimeStyle = DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeLocal
+         };
+         var actual = attribute.Parse("2000-01-01 09:00", typeof(DateTime));
          Assert.That(actual, Is.EqualTo(expected));
       }
    }

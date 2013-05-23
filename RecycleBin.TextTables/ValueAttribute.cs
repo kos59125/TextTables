@@ -40,6 +40,22 @@ namespace RecycleBin.TextTables
       public string CultureName { get; set; }
 
       /// <summary>
+      /// Gets or sets a value which indicates the format of numbers.
+      /// </summary>
+      /// <remarks>
+      /// This value is ignored when <see cref="ParserType"/> is not <c>null</c>.
+      /// </remarks>
+      public NumberStyles NumberStyle { get; set; }
+
+      /// <summary>
+      /// Gets or sets a value which indicates the format of <see cref="System.DateTime"/>.
+      /// </summary>
+      /// <remarks>
+      /// This value is ignored when <see cref="ParserType"/> is not <c>null</c>.
+      /// </remarks>
+      public DateTimeStyles DateTimeStyle { get; set; }
+
+      /// <summary>
       /// Gets or sets a parser of the column.
       /// </summary>
       /// <returns>The parser.</returns>
@@ -58,6 +74,8 @@ namespace RecycleBin.TextTables
       {
          this.parserCache = new Dictionary<Type, Func<string, IFormatProvider, object>>();
          this.formatterCache = new Dictionary<Type, Func<object, IFormatProvider, string>>();
+         NumberStyle = NumberStyles.Any;
+         DateTimeStyle = DateTimeStyles.None;
       }
 
       /// <summary>
@@ -84,7 +102,7 @@ namespace RecycleBin.TextTables
             {
                type = type.GetGenericArguments()[0];
             }
-            return ParsePrimitive(type, value, culture);
+            return ParsePrimitive(type, value, culture, NumberStyle, DateTimeStyle);
          }
          else
          {
@@ -98,7 +116,7 @@ namespace RecycleBin.TextTables
          }
       }
 
-      private static object ParsePrimitive(Type type, string value, IFormatProvider provider)
+      private static object ParsePrimitive(Type type, string value, IFormatProvider provider, NumberStyles numberStyle, DateTimeStyles datetimeStyle)
       {
          if (type.IsEnum)
          {
@@ -110,35 +128,35 @@ namespace RecycleBin.TextTables
             case TypeCode.Boolean:
                return Boolean.Parse(value);
             case TypeCode.Byte:
-               return Byte.Parse(value, NumberStyles.Any, provider);
+               return Byte.Parse(value, numberStyle, provider);
             case TypeCode.Char:
                return Char.Parse(value);
             case TypeCode.DateTime:
-               return DateTime.Parse(value, provider);
+               return DateTime.Parse(value, provider, datetimeStyle);
             case TypeCode.Decimal:
-               return Decimal.Parse(value, NumberStyles.Any, provider);
+               return Decimal.Parse(value, numberStyle, provider);
             case TypeCode.Double:
-               return Double.Parse(value, NumberStyles.Any, provider);
+               return Double.Parse(value, numberStyle, provider);
             case TypeCode.Empty:
                return null;
             case TypeCode.Int16:
-               return Int16.Parse(value, NumberStyles.Any, provider);
+               return Int16.Parse(value, numberStyle, provider);
             case TypeCode.Int32:
-               return Int32.Parse(value, NumberStyles.Any, provider);
+               return Int32.Parse(value, numberStyle, provider);
             case TypeCode.Int64:
-               return Int64.Parse(value, NumberStyles.Any, provider);
+               return Int64.Parse(value, numberStyle, provider);
             case TypeCode.SByte:
-               return SByte.Parse(value, NumberStyles.Any, provider);
+               return SByte.Parse(value, numberStyle, provider);
             case TypeCode.Single:
-               return Single.Parse(value, NumberStyles.Any, provider);
+               return Single.Parse(value, numberStyle, provider);
             case TypeCode.String:
                return value;
             case TypeCode.UInt16:
-               return UInt16.Parse(value, NumberStyles.Any, provider);
+               return UInt16.Parse(value, numberStyle, provider);
             case TypeCode.UInt32:
-               return UInt32.Parse(value, NumberStyles.Any, provider);
+               return UInt32.Parse(value, numberStyle, provider);
             case TypeCode.UInt64:
-               return UInt64.Parse(value, NumberStyles.Any, provider);
+               return UInt64.Parse(value, numberStyle, provider);
             default:
                throw new NotSupportedException(string.Format("Type code {0} is not supported.", typeCode));
          }
