@@ -14,10 +14,10 @@ namespace RecycleBin.TextTables
          return type.GetConstructor(Type.EmptyTypes);
       }
 
-      internal static bool IsNullable(this Type type)
+      internal static bool IsGenericTypeOf(this Type type, Type genericType)
       {
          Contract.Requires(type != null);
-         return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+         return type.IsGenericType && type.GetGenericTypeDefinition() == genericType;
       }
 
       internal static bool IsStatic(this Type type)

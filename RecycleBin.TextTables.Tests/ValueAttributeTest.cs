@@ -165,6 +165,20 @@ namespace RecycleBin.TextTables
       }
 
       [Test]
+      public void TestParseLazy()
+      {
+         var expected = 1;
+         var expectedType = typeof(Lazy<Int32>);
+         var attribute = new ValueAttribute();
+         var actual = attribute.Parse("1", expectedType);
+         Assert.That(actual.GetType(), Is.EqualTo(expectedType));
+         var lazy = (Lazy<Int32>)actual;
+         Assert.That(lazy.IsValueCreated, Is.False);
+         Assert.That(lazy.Value, Is.EqualTo(expected));
+         Assert.That(lazy.IsValueCreated, Is.True);
+      }
+
+      [Test]
       public void TestParseWithExplicitParser()
       {
          var expected = new TestClass(1);

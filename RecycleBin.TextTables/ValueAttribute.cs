@@ -99,20 +99,27 @@ namespace RecycleBin.TextTables
             return null;
          }
          var culture = CultureName == null ? CultureInfo.InvariantCulture : CultureInfo.GetCultureInfo(CultureName);
-         var type = memberType;
-         if (ParserType == null)
-         {
-            if (type.IsArray && ArrayIndex != null)
-            {
-               type = type.GetElementType();
-            }
-            if (type.IsNullable())
-            {
-               type = type.GetGenericArguments()[0];
-            }
-         }
-         var parse = CreateOrGetParse(ParserType ?? type);
+         var parserType = ParserType ?? CreateParserType(memberType);
+         var parse = CreateOrGetParse(parserType);
          return parse(value, culture);
+      }
+
+      private Type CreateParserType(Type type)
+      {
+         if (type.IsArray && ArrayIndex != null)
+         {
+            type = type.GetElementType();
+         }
+         if (type.IsGenericTypeOf(typeof(Nullable<>)))
+         {
+            type = type.GetGenericArguments()[0];
+         }
+         if (type.IsGenericTypeOf(typeof(Lazy<>)))
+         {
+            var innerType = type.GetGenericArguments()[0];
+            type = typeof(LazyParser<>).MakeGenericType(innerType);
+         }
+         return type;
       }
 
       private Func<string, IFormatProvider, object> CreateOrGetParse(Type parserType)
@@ -120,10 +127,13 @@ namespace RecycleBin.TextTables
          Func<string, IFormatProvider, object> parse;
          if (!this.parserCache.TryGetValue(parserType, out parse))
          {
-            parse = GenerateParsePrimitive(parserType, NumberStyle, DateTimeStyle);
-            if (parse == null)  // ParserType != null or TypeCode of memberType is Object
+            if (parserType.IsGenericTypeOf(typeof(LazyParser<>)))
             {
-               parse = GenerateParse(parserType);
+               parse = GenerateParseLazy(parserType, this);
+            }
+            else
+            {
+               parse = GenerateParse(parserType, NumberStyle, DateTimeStyle);
                if (parse == null)
                {
                   var message = string.Format("Cannot find any way to convert field to member type {0}.", parserType.FullName);
@@ -135,7 +145,14 @@ namespace RecycleBin.TextTables
          return parse;
       }
 
-      private static Func<string, IFormatProvider, object> GenerateParsePrimitive(Type type, NumberStyles numberStyle, DateTimeStyles datetimeStyle)
+      private static Func<string, IFormatProvider, object> GenerateParseLazy(Type lazyParserType, ValueAttribute attribute)
+      {
+         var parse = typeof(IParser).GetMethod("Parse", new[] { typeof(string), typeof(IFormatProvider) });
+         var instance = Activator.CreateInstance(lazyParserType, attribute);
+         return (value, provider) => parse.Invoke(instance, new object[] { value, provider });
+      }
+
+      private static Func<string, IFormatProvider, object> GenerateParse(Type type, NumberStyles numberStyle, DateTimeStyles datetimeStyle)
       {
          if (type.IsEnum)
          {
@@ -177,11 +194,11 @@ namespace RecycleBin.TextTables
             case TypeCode.UInt64:
                return (value, provider) => UInt64.Parse(value, numberStyle, provider);
             default:
-               return null;
+               return GenerateParseObject(type);
          }
       }
 
-      private static Func<string, IFormatProvider, object> GenerateParse(Type parserType)
+      private static Func<string, IFormatProvider, object> GenerateParseObject(Type parserType)
       {
          var parse = parserType.GetMethod("Parse", new[] { typeof(string), typeof(IFormatProvider) });
          if (parse != null)

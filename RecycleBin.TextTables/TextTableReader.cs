@@ -137,7 +137,7 @@ namespace RecycleBin.TextTables
       public IEnumerable<TRecord> ReadToEnd<TRecord>()
       {
          var recordType = typeof(TRecord);
-         if (recordType.IsNullable())
+         if (recordType.IsGenericTypeOf(typeof(Nullable<>)))
          {
             recordType = recordType.GetGenericArguments()[0];
          }

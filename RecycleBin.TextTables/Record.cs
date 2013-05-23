@@ -80,7 +80,7 @@ namespace RecycleBin.TextTables
       public TRecord Convert<TRecord>()
       {
          var recordType = typeof(TRecord);
-         if (recordType.IsNullable())
+         if (recordType.IsGenericTypeOf(typeof(Nullable<>)))
          {
             recordType = recordType.GetGenericArguments()[0];
          }
