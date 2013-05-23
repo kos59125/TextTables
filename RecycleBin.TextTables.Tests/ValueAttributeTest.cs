@@ -184,9 +184,9 @@ namespace RecycleBin.TextTables
          {
             NumberStyle = NumberStyles.Integer
          };
-         var expectedType = typeof(Double);
-         Assert.That(attribute.Parse("1", expectedType), Is.EqualTo(Double.Parse("1")));
-         Assert.That(attribute.Parse("1.0", expectedType), Throws.TypeOf(typeof(FormatException)));
+         var type = typeof(Double);
+         Assert.That(attribute.Parse("1", type), Is.EqualTo(Double.Parse("1")));
+         Assert.That(attribute.Parse("1.0", type), Throws.TypeOf(typeof(FormatException)));
       }
 
       [Test]

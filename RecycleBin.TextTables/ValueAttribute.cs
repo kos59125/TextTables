@@ -91,74 +91,85 @@ namespace RecycleBin.TextTables
             return null;
          }
          var culture = CultureName == null ? CultureInfo.InvariantCulture : CultureInfo.GetCultureInfo(CultureName);
+         var type = memberType;
          if (ParserType == null)
          {
-            var type = memberType;
             if (type.IsArray && ArrayIndex != null)
             {
                type = type.GetElementType();
             }
-            if (type.IsNullable() && ParserType == null)
+            if (type.IsNullable())
             {
                type = type.GetGenericArguments()[0];
             }
-            return ParsePrimitive(type, value, culture, NumberStyle, DateTimeStyle);
          }
-         else
-         {
-            Func<string, IFormatProvider, object> parse;
-            if (!this.parserCache.TryGetValue(ParserType, out parse))
-            {
-               parse = GenerateParse(ParserType);
-               this.parserCache.Add(ParserType, parse);
-            }
-            return parse(value, culture);
-         }
+         var parse = CreateOrGetParse(ParserType ?? type);
+         return parse(value, culture);
       }
 
-      private static object ParsePrimitive(Type type, string value, IFormatProvider provider, NumberStyles numberStyle, DateTimeStyles datetimeStyle)
+      private Func<string, IFormatProvider, object> CreateOrGetParse(Type parserType)
+      {
+         Func<string, IFormatProvider, object> parse;
+         if (!this.parserCache.TryGetValue(parserType, out parse))
+         {
+            parse = GenerateParsePrimitive(parserType, NumberStyle, DateTimeStyle);
+            if (parse == null)  // ParserType != null or TypeCode of memberType is Object
+            {
+               parse = GenerateParse(parserType);
+               if (parse == null)
+               {
+                  var message = string.Format("Cannot find any way to convert field to member type {0}.", parserType.FullName);
+                  throw new NotSupportedException(message);
+               }
+            }
+            this.parserCache.Add(parserType, parse);
+         }
+         return parse;
+      }
+
+      private static Func<string, IFormatProvider, object> GenerateParsePrimitive(Type type, NumberStyles numberStyle, DateTimeStyles datetimeStyle)
       {
          if (type.IsEnum)
          {
-            return Enum.Parse(type, value, true);
+            return (value, _) => Enum.Parse(type, value, true);
          }
          var typeCode = Type.GetTypeCode(type);
          switch (typeCode)
          {
             case TypeCode.Boolean:
-               return Boolean.Parse(value);
+               return (value, _) => Boolean.Parse(value);
             case TypeCode.Byte:
-               return Byte.Parse(value, numberStyle, provider);
+               return (value, provider) => Byte.Parse(value, numberStyle, provider);
             case TypeCode.Char:
-               return Char.Parse(value);
+               return (value, _) => Char.Parse(value);
             case TypeCode.DateTime:
-               return DateTime.Parse(value, provider, datetimeStyle);
+               return (value, provider) => DateTime.Parse(value, provider, datetimeStyle);
             case TypeCode.Decimal:
-               return Decimal.Parse(value, numberStyle, provider);
+               return (value, provider) => Decimal.Parse(value, numberStyle, provider);
             case TypeCode.Double:
-               return Double.Parse(value, numberStyle, provider);
+               return (value, provider) => Double.Parse(value, numberStyle, provider);
             case TypeCode.Empty:
                return null;
             case TypeCode.Int16:
-               return Int16.Parse(value, numberStyle, provider);
+               return (value, provider) => Int16.Parse(value, numberStyle, provider);
             case TypeCode.Int32:
-               return Int32.Parse(value, numberStyle, provider);
+               return (value, provider) => Int32.Parse(value, numberStyle, provider);
             case TypeCode.Int64:
-               return Int64.Parse(value, numberStyle, provider);
+               return (value, provider) => Int64.Parse(value, numberStyle, provider);
             case TypeCode.SByte:
-               return SByte.Parse(value, numberStyle, provider);
+               return (value, provider) => SByte.Parse(value, numberStyle, provider);
             case TypeCode.Single:
-               return Single.Parse(value, numberStyle, provider);
+               return (value, provider) => Single.Parse(value, numberStyle, provider);
             case TypeCode.String:
-               return value;
+               return (value, _) => value;
             case TypeCode.UInt16:
-               return UInt16.Parse(value, numberStyle, provider);
+               return (value, provider) => UInt16.Parse(value, numberStyle, provider);
             case TypeCode.UInt32:
-               return UInt32.Parse(value, numberStyle, provider);
+               return (value, provider) => UInt32.Parse(value, numberStyle, provider);
             case TypeCode.UInt64:
-               return UInt64.Parse(value, numberStyle, provider);
+               return (value, provider) => UInt64.Parse(value, numberStyle, provider);
             default:
-               throw new NotSupportedException(string.Format("Type code {0} is not supported.", typeCode));
+               return null;
          }
       }
 
