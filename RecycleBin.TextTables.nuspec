@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>RecycleBin.TextTables</id>
-      <version>1.2.0.0</version>
+      <version>1.3.0.0</version>
       <title>RecycleBin.TextTables</title>
       <authors>RecycleBin</authors>
       <owners>kos59125</owners>
@@ -15,7 +15,7 @@
       <references>
          <reference file="RecycleBin.TextTables.dll" />
       </references>
-      <tags>table CSV TSV space-delimited parser reader writer LINQ</tags>
+      <tags>table CSV TSV space-delimited LINQ</tags>
    </metadata>
    <files>
       <file src="RecycleBin.TextTables\bin\Release\*.dll" target="lib\net40" />
