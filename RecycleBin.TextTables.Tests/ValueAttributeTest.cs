@@ -201,6 +201,42 @@ namespace RecycleBin.TextTables
          var actual = attribute.Parse("2000-01-01 09:00", typeof(DateTime));
          Assert.That(actual, Is.EqualTo(expected));
       }
+
+      // See http://msdn.microsoft.com/en-us/library/dwhawy9k.aspx
+      [TestCase(1, null, null, Result = "1")]
+      [TestCase(1, "###", null, Result = "1")]
+      [TestCase(1, "000", null, Result = "001")]
+      [TestCase(1.2, "#.###", null, Result = "1.2")]
+      [TestCase(1.2, "#.000", null, Result = "1.200")]
+      [TestCase(12345.6789, "C", "en-US", Result = "$12,345.68")]
+      [TestCase(0x12AB, "X8", null, Result = "000012AB")]
+      public string TestFormatNumberWithFormatString(object value, string format, string cultureName)
+      {
+         var attribute = new ValueAttribute()
+         {
+            CultureName = cultureName,
+            FormatString = format
+         };
+         return attribute.Format(value);
+      }
+
+      // See http://msdn.microsoft.com/en-us/library/az4se3k1.aspx
+      [TestCase("u", null, Result = "2000-01-23 04:56:07Z")]
+      [TestCase("o", null, Result = "2000-01-23T04:56:07.8900000")]
+      [TestCase("d", "en-US", Result = "1/23/2000")]
+      [TestCase("d", "en-NZ", Result = "23/01/2000")]
+      [TestCase("d", "de-DE", Result = "23.01.2000")]
+      [TestCase("yyyy", null, Result = "2000")]
+      public string TestFormatDateTimeWithFormatString(string format, string cultureName)
+      {
+         var datetime = new DateTime(2000, 1, 23, 4, 56, 7, 890);
+         var attribute = new ValueAttribute()
+         {
+            CultureName = cultureName,
+            FormatString = format
+         };
+         return attribute.Format(datetime);
+      }
    }
 
    enum TestEnum

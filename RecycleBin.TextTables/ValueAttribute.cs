@@ -62,6 +62,14 @@ namespace RecycleBin.TextTables
       public Type ParserType { get; set; }
 
       /// <summary>
+      /// Gets or sets a string which specifies output format.
+      /// </summary>
+      /// <remarks>
+      /// This value is ignored when <see cref="FormatterType"/> is not <c>null</c>.
+      /// </remarks>
+      public string FormatString { get; set; }
+
+      /// <summary>
       /// Gets or sets a formatter of the column.
       /// </summary>
       /// <returns>The formatter.</returns>
@@ -204,7 +212,8 @@ namespace RecycleBin.TextTables
          var culture = CultureName == null ? CultureInfo.InvariantCulture : CultureInfo.GetCultureInfo(CultureName);
          if (FormatterType == null)
          {
-            return string.Format(culture, "{0}", value);
+            var format = FormatString == null ? "{0}" : ("{0:" + FormatString + "}");
+            return string.Format(culture, format, value);
          }
          else
          {
