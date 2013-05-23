@@ -165,13 +165,22 @@ namespace RecycleBin.TextTables
       }
 
       [Test]
-      public void TestParseWithParser()
+      public void TestParseWithExplicitParser()
       {
          var expected = new TestClass(1);
          var attribute = new ValueAttribute()
          {
             ParserType = typeof(TestClassParserFormatter)
          };
+         var actual = attribute.Parse("1", typeof(TestClass));
+         Assert.That(actual, Is.EqualTo(expected));
+      }
+
+      [Test]
+      public void TestParseWithImplicitParser()
+      {
+         var expected = new TestClass(1);
+         var attribute = new ValueAttribute();
          var actual = attribute.Parse("1", typeof(TestClass));
          Assert.That(actual, Is.EqualTo(expected));
       }
@@ -259,6 +268,10 @@ namespace RecycleBin.TextTables
       {
          var other = obj as TestClass;
          return other != null && this.Value == other.Value;
+      }
+      public static TestClass Parse(string value, IFormatProvider provider)
+      {
+         return new TestClass(Int32.Parse(value, provider));
       }
    }
 
