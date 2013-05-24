@@ -136,16 +136,9 @@ namespace RecycleBin.TextTables
       /// <returns>The records.</returns>
       public IEnumerable<TRecord> ReadToEnd<TRecord>()
       {
-         var recordType = typeof(TRecord);
-         if (recordType.IsGenericTypeOf(typeof(Nullable<>)))
-         {
-            recordType = recordType.GetGenericArguments()[0];
-         }
          while (MoveNext())
          {
-            var prototype = Activator.CreateInstance(recordType);
-            this.currentRecord.Convert(recordType, ref prototype);
-            yield return (TRecord)prototype;
+            yield return this.currentRecord.Convert<TRecord>();
          }
       }
 

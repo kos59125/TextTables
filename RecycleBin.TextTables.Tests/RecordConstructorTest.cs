@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 
 namespace RecycleBin.TextTables
@@ -35,6 +36,36 @@ namespace RecycleBin.TextTables
             //Assert.That(record.Column4, Is.EqualTo(default(int)));
             Assert.That(record.Column5, Is.EqualTo(-1));
             Assert.That(reader.MoveNext(), Is.False);
+         }
+      }
+
+      [Test]
+      public void TestReadToEndWithParameteredConstructor([Values(EndOfLine.CRLF, EndOfLine.LF, EndOfLine.CR)] EndOfLine eol)
+      {
+         var csv = string.Format("1,2,3,4,5{0}6,7,8{0}", eol.AsNewline());
+         var settings = new CsvReaderSettings()
+         {
+            RecordDelimiter = eol,
+         };
+         using (var stringReader = new StringReader(csv))
+         using (var reader = new CsvReader(stringReader, settings))
+         {
+            var records = reader.ReadToEnd<RecordWithParameteredConstructor>().ToList();
+            Assert.That(records.Count, Is.EqualTo(2));
+            var record = records[0];
+            Assert.That(record, Is.Not.Null);
+            Assert.That(record.Column1, Is.EqualTo(1));
+            Assert.That(record.Column2, Is.EqualTo(2));
+            Assert.That(record.Column3, Is.EqualTo(3));
+            //Assert.That(record.Column4, Is.EqualTo(4));
+            Assert.That(record.Column5, Is.EqualTo(5));
+            record = records[1];
+            Assert.That(record, Is.Not.Null);
+            Assert.That(record.Column1, Is.EqualTo(6));
+            Assert.That(record.Column2, Is.EqualTo(7));
+            Assert.That(record.Column3, Is.EqualTo(8));
+            //Assert.That(record.Column4, Is.EqualTo(default(int)));
+            Assert.That(record.Column5, Is.EqualTo(-1));
          }
       }
 
