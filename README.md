@@ -9,8 +9,7 @@ Features
 * Easy to Use:
 
 ```csharp
-using (var reader = new StreamReader(@"X:\Path\To\File.csv"))
-using (var csv = new CsvReader(reader))
+using (var csv = new CsvReader(@"X:\Path\To\File.csv"))
 {
    while (csv.MoveNext())
    {
@@ -48,7 +47,7 @@ public class Person
 
 Now, we can read the text file.
 ```csharp
-using (var table = new SpaceSeparatedTableReader(reader))
+using (var table = new SpaceSeparatedTableReader(@"X:\Path\TO\Table.txt"))
 {
    // Notify the reader that the first line is the header.
    table.HandleHeaderRow();
