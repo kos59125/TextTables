@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using NUnit.Framework;
 
@@ -151,6 +152,58 @@ namespace RecycleBin.TextTables
          var actual = attribute.Parse("1.5", expectedType);
          Assert.That(actual.GetType(), Is.EqualTo(expectedType));
          Assert.That(actual, Is.EqualTo(expected));
+      }
+
+      [TestCase(null)]
+      [TestCase("yyyy-MM-dd HH:mm:ss.fff")]
+      [TestCase("yyyy-MM-dd HH:mm:ss", ExpectedException = typeof(FormatException))]
+      public void TestParseExactDateTimeSuccess(string format)
+      {
+         var expected = new DateTime(2000, 1, 23, 4, 56, 7, 890);
+         var expectedType = typeof(DateTime);
+         var attribute = new ValueAttribute() { FormatString = format };
+         var actual = attribute.Parse("2000-01-23 04:56:07.890", expectedType);
+         Assert.That(actual.GetType(), Is.EqualTo(expectedType));
+         Assert.That(actual, Is.EqualTo(expected));
+      }
+
+      [TestCase("yyyy-MM-dd HH:mm:ss", ExpectedException = typeof(FormatException))]
+      [TestCase("yyyy-MM-dd HH:mm:ss.ffff", ExpectedException = typeof(FormatException))]
+      public void TestParseExactDateTimeFailure(string format)
+      {
+         var expected = new DateTime(2000, 1, 23, 4, 56, 7, 890);
+         var expectedType = typeof(DateTime);
+         var attribute = new ValueAttribute() { FormatString = format };
+         Assert.That(attribute.Parse("2000-01-23 04:56:07.890", expectedType), Throws.TypeOf(typeof(FormatException)));
+      }
+
+      [TestCase(null)]
+      [TestCase("D")]
+      public void TestParseExactGuidSuccess(string format)
+      {
+         var expected = Guid.Empty;
+         var expectedType = typeof(Guid);
+         var attribute = new ValueAttribute() { FormatString = format };
+         var actual = attribute.Parse("00000000-0000-0000-0000-000000000000", expectedType);
+         Assert.That(actual.GetType(), Is.EqualTo(expectedType));
+         Assert.That(actual, Is.EqualTo(expected));
+      }
+
+      [TestCase("B")]
+      [TestCase("N")]
+      public void TestParseExactGuidFailure(string format)
+      {
+         var attribute = new ValueAttribute() { FormatString = format };
+         try
+         {
+            // Calls ParseExact method via reflection.
+            // The error is wraped by TargetInvocationException
+            attribute.Parse(Guid.Empty.ToString("D"), typeof(Guid));
+         }
+         catch (TargetInvocationException ex)
+         {
+            Assert.That(ex.InnerException.GetType (), Is.EqualTo(typeof(FormatException)));
+         }
       }
 
       [Test]

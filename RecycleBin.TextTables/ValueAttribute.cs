@@ -133,7 +133,7 @@ namespace RecycleBin.TextTables
             }
             else
             {
-               parse = GenerateParse(parserType, NumberStyle, DateTimeStyle);
+               parse = GenerateParse(parserType, FormatString, NumberStyle, DateTimeStyle);
                if (parse == null)
                {
                   var message = string.Format("Cannot find any way to convert field to member type {0}.", parserType.FullName);
@@ -152,7 +152,7 @@ namespace RecycleBin.TextTables
          return (value, provider) => parse.Invoke(instance, new object[] { value, provider });
       }
 
-      private static Parse GenerateParse(Type type, NumberStyles numberStyle, DateTimeStyles datetimeStyle)
+      private static Parse GenerateParse(Type type, string format, NumberStyles numberStyle, DateTimeStyles datetimeStyle)
       {
          if (type.IsEnum)
          {
@@ -168,6 +168,10 @@ namespace RecycleBin.TextTables
             case TypeCode.Char:
                return (value, _) => Char.Parse(value);
             case TypeCode.DateTime:
+               if (format != null)
+               {
+                  return (value, provider) => DateTime.ParseExact(value, format, provider, datetimeStyle);
+               }
                return (value, provider) => DateTime.Parse(value, provider, datetimeStyle);
             case TypeCode.Decimal:
                return (value, provider) => Decimal.Parse(value, numberStyle, provider);
@@ -194,11 +198,52 @@ namespace RecycleBin.TextTables
             case TypeCode.UInt64:
                return (value, provider) => UInt64.Parse(value, numberStyle, provider);
             default:
-               return GenerateParseObject(type);
+               return GenerateParseObject(type, format);
          }
       }
 
-      private static Parse GenerateParseObject(Type parserType)
+      private static Parse GenerateParseObject(Type parserType, string format)
+      {
+         Parse parse = null;
+         if (format != null)
+         {
+            // * TimeSpan.ParseExact(string, string, IFormatProvider, TimeSpanStyles)
+            // * DateTimeOffset.ParseExact(string, string, IFormatProvider, DateTimeStyles)
+            // are not supported for the following reasons:
+            // 1) ParseExact(string, string, IFormatProvider) is caught by FindParseExact in the next line.
+            // 2) ParserType is availabe for such a complex parsing task.
+            parse = FindParseExact(parserType, format);
+            if (parse != null)
+            {
+               return parse;
+            }
+         }
+         parse = FindParse(parserType);
+         if (parse != null)
+         {
+            return parse;
+         }
+         throw new ArgumentException(string.Format("ParserType '{0}' does not have Parse(String [, IFormatProvider]) method or ParseExact(String, String [, IFormatProvider]).", parserType.FullName));
+      }
+
+      private static Parse FindParseExact(Type parserType, string format)
+      {
+         var parse = parserType.GetMethod("ParseExact", new[] { typeof(string), typeof(string), typeof(IFormatProvider) });
+         if (parse != null)
+         {
+            var parser = parse.IsStatic ? null : Activator.CreateInstance(parserType);
+            return (value, provider) => parse.Invoke(parser, new object[] { value, format, provider });
+         }
+         parse = parserType.GetMethod("ParseExact", new[] { typeof(string), typeof(string) });
+         if (parse != null)
+         {
+            var parser = parse.IsStatic ? null : Activator.CreateInstance(parserType);
+            return (value, _) => parse.Invoke(parser, new object[] { value, format });
+         }
+         return null;
+      }
+
+      private static Parse FindParse(Type parserType)
       {
          var parse = parserType.GetMethod("Parse", new[] { typeof(string), typeof(IFormatProvider) });
          if (parse != null)
@@ -212,7 +257,7 @@ namespace RecycleBin.TextTables
             var parser = parse.IsStatic ? null : Activator.CreateInstance(parserType);
             return (value, _) => parse.Invoke(parser, new object[] { value });
          }
-         throw new ArgumentException(string.Format("ParserType '{0}' does not have Parse(String [, IFormatProvider]) method.", parserType.FullName));
+         return null;
       }
 
       /// <summary>
