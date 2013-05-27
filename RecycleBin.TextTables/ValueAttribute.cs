@@ -12,8 +12,8 @@ namespace RecycleBin.TextTables
    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true, Inherited = true)]
    public class ValueAttribute : Attribute
    {
-      private readonly Dictionary<Type, Func<string, IFormatProvider, object>> parserCache;
-      private readonly Dictionary<Type, Func<object, IFormatProvider, string>> formatterCache;
+      private readonly Dictionary<Type, Parse> parserCache;
+      private readonly Dictionary<Type, Format> formatterCache;
 
       /// <summary>
       /// Gets or sets the zero-based index in an array.
@@ -80,8 +80,8 @@ namespace RecycleBin.TextTables
       /// </summary>
       public ValueAttribute()
       {
-         this.parserCache = new Dictionary<Type, Func<string, IFormatProvider, object>>();
-         this.formatterCache = new Dictionary<Type, Func<object, IFormatProvider, string>>();
+         this.parserCache = new Dictionary<Type, Parse>();
+         this.formatterCache = new Dictionary<Type, Format>();
          NumberStyle = NumberStyles.Any;
          DateTimeStyle = DateTimeStyles.None;
       }
@@ -122,9 +122,9 @@ namespace RecycleBin.TextTables
          return type;
       }
 
-      private Func<string, IFormatProvider, object> CreateOrGetParse(Type parserType)
+      private Parse CreateOrGetParse(Type parserType)
       {
-         Func<string, IFormatProvider, object> parse;
+         Parse parse;
          if (!this.parserCache.TryGetValue(parserType, out parse))
          {
             if (parserType.IsGenericTypeOf(typeof(LazyParser<>)))
@@ -145,14 +145,14 @@ namespace RecycleBin.TextTables
          return parse;
       }
 
-      private static Func<string, IFormatProvider, object> GenerateParseLazy(Type lazyParserType, ValueAttribute attribute)
+      private static Parse GenerateParseLazy(Type lazyParserType, ValueAttribute attribute)
       {
          var parse = typeof(IParser).GetMethod("Parse", new[] { typeof(string), typeof(IFormatProvider) });
          var instance = Activator.CreateInstance(lazyParserType, attribute);
          return (value, provider) => parse.Invoke(instance, new object[] { value, provider });
       }
 
-      private static Func<string, IFormatProvider, object> GenerateParse(Type type, NumberStyles numberStyle, DateTimeStyles datetimeStyle)
+      private static Parse GenerateParse(Type type, NumberStyles numberStyle, DateTimeStyles datetimeStyle)
       {
          if (type.IsEnum)
          {
@@ -198,7 +198,7 @@ namespace RecycleBin.TextTables
          }
       }
 
-      private static Func<string, IFormatProvider, object> GenerateParseObject(Type parserType)
+      private static Parse GenerateParseObject(Type parserType)
       {
          var parse = parserType.GetMethod("Parse", new[] { typeof(string), typeof(IFormatProvider) });
          if (parse != null)
@@ -235,7 +235,7 @@ namespace RecycleBin.TextTables
          else
          {
             var valueType = value.GetType();
-            Func<object, IFormatProvider, string> format;
+            Format format;
             if (!this.formatterCache.TryGetValue(FormatterType, out format))
             {
                format = GenerateFormat(FormatterType);
@@ -245,7 +245,7 @@ namespace RecycleBin.TextTables
          }
       }
 
-      private static Func<object, IFormatProvider, string> GenerateFormat(Type formatterType)
+      private static Format GenerateFormat(Type formatterType)
       {
          var format = formatterType.GetMethod("Format", new[] { typeof(object), typeof(IFormatProvider) });
          if (format != null && format.ReturnType == typeof(string))
