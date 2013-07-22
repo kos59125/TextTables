@@ -132,6 +132,18 @@ namespace RecycleBin.TextTables
       /// <summary>
       /// Reads records to the end of the underlying stream.
       /// </summary>
+      /// <returns>The records.</returns>
+      public IEnumerable<Record> ReadToEnd()
+      {
+         while (MoveNext())
+         {
+            yield return this.currentRecord.Clone();
+         }
+      }
+
+      /// <summary>
+      /// Reads records to the end of the underlying stream.
+      /// </summary>
       /// <typeparam name="TRecord">The type of records.</typeparam>
       /// <returns>The records.</returns>
       public IEnumerable<TRecord> ReadToEnd<TRecord>()

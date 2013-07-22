@@ -71,6 +71,19 @@ namespace RecycleBin.TextTables
          this.instantiationCache = new Dictionary<Type, CreateInstance>();
       }
 
+      private Record(Record record)
+      {
+         this.record = new List<string>(record.record);
+         this.header = record.header == null ? null : record.header.ToArray();
+         this.propertyCache = new Dictionary<Type, List<Tuple<SetValue, ColumnAttribute, Type>>>(record.propertyCache);
+         this.instantiationCache = new Dictionary<Type, CreateInstance>(record.instantiationCache);
+      }
+
+      internal Record Clone()
+      {
+         return new Record(this);
+      }
+
       /// <summary>
       /// Reads a record in the specified type.
       /// </summary>
