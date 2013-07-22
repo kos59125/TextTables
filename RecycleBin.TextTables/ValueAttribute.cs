@@ -92,7 +92,7 @@ namespace RecycleBin.TextTables
       /// <param name="value">The string value.</param>
       /// <param name="memberType">The type to convert.</param>
       /// <returns>The object value.</returns>
-      public object Parse(string value, Type memberType)
+      public virtual object Parse(string value, Type memberType)
       {
          if (value == NullString)
          {
@@ -265,7 +265,7 @@ namespace RecycleBin.TextTables
       /// </summary>
       /// <param name="value">The object value.</param>
       /// <returns>The string representation.</returns>
-      public string Format(object value)
+      public virtual string Format(object value)
       {
          if (value == null)
          {
